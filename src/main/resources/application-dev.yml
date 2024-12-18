@@ -29,4 +29,6 @@ logging:
         web:
           filter: DEBUG
 client:
-  transversal: http://localhost:8085/transversal/v1
+  transversal:
+    url: http://localhost:8085/transversal/v1
+    access-key: 1HwyCOpBv45tpC5H
