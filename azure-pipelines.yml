@@ -1,0 +1,33 @@
+name: $(Build.SourceBranchName)-$(Date:yyyyMMdd)-$(Rev:r)
+
+trigger:
+  - DEV
+  - QA
+  - STG
+  - Master
+
+pool:
+  name: Default
+  demands:
+    - java
+
+resources:
+  repositories:
+    - repository: devops
+      type: git
+      name: "DevOps CCB Sitio/SHARED-LIBRARY-CCB"
+      ref: refs/heads/Master
+
+extends:
+  template: template\template-ecr-maven-jdk-default.yaml@devops
+  parameters:
+    pomFile: 'api-cae'
+    srcFolder: 'api-cae'
+    imageName: 'cae'
+    ${{ if ne(variables['Build.SourceBranchName'],'DEV') }}:
+      tagImage: 'latest-$(tagEnv)'
+    ${{else}}:
+      tagImage: 'latest'
+    exclusionsJava: "**/*.js"
+    regexObject:
+      - 'ENCRIPTACION_URL,api-cae/src/main/java/co/org/ccb/caemutacion/util/Constantes.java,public.static.final.String.ENCRIPTACION\_URL.+;,public static final String ENCRIPTACION_URL = "$(mutacionesBackEnd-encriptacionUrl)";'
